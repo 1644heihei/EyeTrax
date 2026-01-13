@@ -5,6 +5,7 @@ from pathlib import Path
 
 import cv2
 import mediapipe as mp
+import mediapipe.python.solutions
 import numpy as np
 
 from eyetrax.constants import LEFT_EYE_INDICES, MUTUAL_INDICES, RIGHT_EYE_INDICES

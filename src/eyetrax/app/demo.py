@@ -39,6 +39,16 @@ def run_demo():
         else:
             run_lissajous_calibration(gaze_estimator, camera_index=camera_index)
 
+    # Check if model is fitted before proceeding
+    from sklearn.exceptions import NotFittedError
+    from sklearn.utils.validation import check_is_fitted
+
+    try:
+        check_is_fitted(gaze_estimator.model.scaler)
+    except NotFittedError:
+        print("[Error] Model not fitted. Calibration failed or was skipped. Exiting.")
+        return
+
     screen_width, screen_height = get_screen_size()
 
     if filter_method == "kalman":
