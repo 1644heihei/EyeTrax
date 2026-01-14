@@ -77,10 +77,24 @@ def run_mouse_control():
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
     cv2.resizeWindow(window_name, 400, 100)
 
+    # Blink detection variables
+    blink_frames = 0
+    BLINK_CLICK_MIN_FRAMES = 4  # Minimum frames to trigger click
+    BLINK_CLICK_MAX_FRAMES = 15 # Maximum frames to trigger click (avoid click on long eye closure)
+
     try:
         with camera(camera_index) as cap:
             for frame in iter_frames(cap):
                 features, blink_detected = gaze_estimator.extract_features(frame)
+
+                # Blink Logic
+                if blink_detected:
+                    blink_frames += 1
+                else:
+                    if BLINK_CLICK_MIN_FRAMES <= blink_frames <= BLINK_CLICK_MAX_FRAMES:
+                        print("[mouse] Click triggered!")
+                        pyautogui.click()
+                    blink_frames = 0
 
                 if features is not None and not blink_detected:
                     gaze_point = gaze_estimator.predict(np.array([features]))[0]
